@@ -1,10 +1,108 @@
 import streamlit as st
-from utils import init_state, load_listings
+from app.utils import init_state, load_listings
+
+
 
 init_state()
-from utils import get_listings
+from app.utils import get_listings
+
+st.markdown("""
+<style>
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600&display=swap');
+
+/* App background */
+.stApp {
+    background-color: #2B0F1E;
+    color: #F5EDF2;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Headings */
+h1, h2, h3, h4 {
+    font-family: 'Playfair Display', serif;
+    color: #F5EDF2;
+}
+
+/* Cards (columns) */
+[data-testid="column"] {
+    background-color: #3A1428;
+    padding: 1.5rem;
+    border-radius: 16px;
+}
+
+/* Labels */
+label, .stMarkdown {
+    color: #F5EDF2 !important;
+}
+
+/* Inputs */
+input, textarea, select {
+    background-color: #4A1C34 !important;
+    color: #F5EDF2 !important;
+    border-radius: 10px !important;
+    border: 1px solid #6A2A4A !important;
+}
+
+/* Sliders */
+[data-baseweb="slider"] > div {
+    color: #C04A7A;
+}
+
+/* Buttons */
+.stButton > button {
+    background-color: #C04A7A;
+    color: white;
+    border-radius: 12px;
+    font-weight: 500;
+    border: none;
+}
+
+.stButton > button:hover {
+    background-color: #A83E68;
+}
+
+/* Disabled input */
+input:disabled {
+    opacity: 0.6;
+}
+
+/* Progress bar */
+.stProgress > div > div {
+    background-color: #C04A7A;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 df = get_listings()
-st.markdown("## 1) Onboarding → Squad")
+
+AREA_GROUPS = {
+    "uOttawa / Residences": [
+        "Annex", "45 Mann", "Friel", "Leblanc", "Thompson", "Rideau",
+        "Hyman Soloway", "90 University", "Stanton", "Marchand", "Henderson",
+    ],
+    "Nearby / Central Ottawa": [
+        "Sandy Hill", "ByWard Market / Lowertown", "Centretown", "Golden Triangle",
+        "Old Ottawa East", "The Glebe", "Vanier", "Overbrook",
+    ],
+    "West / Other": [
+        "Hintonburg", "Little Italy", "Westboro", "Alta Vista",
+        "Nepean", "Kanata", "Barrhaven",
+    ],
+}
+
+# Flatten the grouped list
+static_areas = [a for group in AREA_GROUPS.values() for a in group]
+
+# Keep any real areas already in df (if they exist)
+df_areas = []
+if "area" in df.columns:
+    df_areas = [x for x in df["area"].dropna().astype(str).unique().tolist() if x.strip()]
+
+ALL_AREAS = sorted(set(static_areas + df_areas))
+st.markdown("<h1>Onboarding → Squad</h1>", unsafe_allow_html=True)
+st.caption("Set shared constraints and invite your squad.")
 
 if st.session_state.role != "student":
     st.info("Switch to Student role from Home (log out and log in as Student).")

@@ -1,6 +1,6 @@
 import streamlit as st
 from datetime import datetime
-from utils import init_state
+from app.utils import init_state
 
 init_state()
 
