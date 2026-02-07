@@ -15,7 +15,7 @@ st.caption("MVP: reconfirmation restores trust. In demo, we just show the concep
 
 listing_id = st.selectbox("Select listing (demo)", df["id"].tolist())
 row = df[df["id"] == int(listing_id)].iloc[0]
-st.write(f"**{row['title']}** — {row['area']} — ${int(row['price'])}")
+st.write(f"**{row['title']}** — {row['area']} — \\${int(row['price'])}")
 
 if st.button("Confirm availability", type="primary"):
     st.success("Availability confirmed (demo). In real app: updates verified_at → badge becomes Verified.")

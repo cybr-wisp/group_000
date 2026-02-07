@@ -51,14 +51,14 @@ with right:
     st.markdown("### Final Safety Check (filters → matched listings)")
     with st.container(border=True):
         st.write("For the demo, this can simply confirm their constraints and show a shortlist.")
-        st.write(f"**Budget:** ${st.session_state.profile['budget']} | **Areas:** {', '.join(st.session_state.profile['areas'] or ['(none)'])}")
+        st.write(f"**Budget:** \\${st.session_state.profile['budget']} | **Areas:** {', '.join(st.session_state.profile['areas'] or ['(none)'])}")
         st.write(f"**Move-in:** {st.session_state.profile['move_in']} | **Roommates:** {st.session_state.profile['roommates']}")
 
         # Lightweight "matches"
         matches = df[df["price"] <= int(st.session_state.profile["budget"])].head(12)
         st.markdown(f"**These {len(matches)} listings match your situation.**")
         for _, r in matches.iterrows():
-            st.write(f"• {r['title']} — {r['area']} — ${int(r['price'])}")
+            st.write(f"• {r['title']} — {r['area']} — \\${int(r['price'])}")
 
     st.markdown("### Incident Pack (one-click generator)")
     with st.container(border=True):
