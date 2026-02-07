@@ -1,5 +1,7 @@
-id,name,cleanliness,noise,sleep_schedule,budget,smoking,pets,notes
-1,Aya,8,3,early,900,no,no,Quiet and organized
-2,Sam,6,6,late,850,no,yes,Has a cat
-3,Noor,9,2,early,950,no,no,Very tidy
-4,Leo,5,7,late,800,yes,no,Sociable
+id,title,area,price,beds,landlord,verified_at,address,available_date,lease_length,photo_count,lease_uploaded,availability_confirmed
+1,Aya,ByWard Market,999,1,animra,2026-02-05,250 Laurier Ave E,2026-03-01,12 months,3,yes,yes
+2,Sam,Sandy Hill,925,1,animra,2026-01-28,45 Wilbrod St,2026-03-01,8 months,2,no,yes
+3,Noor,CentreTown,1150,2,Private Landlord,2026-01-24,180 Bank St,2026-04-01,12 months,1,yes,no
+4,Leo,Glebe,1550,2,Private Landlord,2026-01-15,88 2nd Ave,2026-05-01,12 months,3,no,yes
+5,Mila,Old Ottawa South,850,0,Private Landlord,2026-02-06,720 Bronson Ave,2026-03-15,8 months,2,no,yes
+6,Zara,Lowertown,1050,1,Private Landlord,2026-01-10,390 Rideau St,2026-03-01,12 months,0,no,no

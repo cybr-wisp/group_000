@@ -8,18 +8,16 @@ from app.utils import (
 inject_css()
 init_state()
 df = get_listings()
-
 st.markdown(
     """
     <div class="hero">
-      <div class="hero-title">2) Verified Listings Browse</div>
-      <div class="hero-sub">
-        Only listings that pass the verification funnel stay visible. Trust decays automatically.
-      </div>
+      <div class="hero-title">Verified Listings</div>
+      <div class="hero-sub">Browse listings that passed verification. Trust decays automatically.</div>
     </div>
     """,
     unsafe_allow_html=True
 )
+st.write("")
 st.write("")
 
 if st.session_state.role != "student":

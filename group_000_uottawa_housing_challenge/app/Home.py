@@ -3,22 +3,190 @@ import numpy as np
 from utils import inject_css, init_state, load_listings, render_risk_timeline_sidebar
 
 # ✅ MUST be at top-level (before any UI calls)
-st.set_page_config(page_title="ScamProof Housing", page_icon="🛡️", layout="wide")
+st.set_page_config(
+    page_title="GEEGEELease",
+    page_icon="🏠",
+    layout="wide"
+)
+
+# -------------------------------------------------
+# Page-specific CSS: clean white + deep red accents
+# -------------------------------------------------
+st.markdown(
+    """
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root{
+  --bg: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --card: #f8fafc;
+  --border: #e5e7eb;
+  --accent: #8B1E3F;      /* deep red */
+  --accentHover: #741835;
+  --soft: rgba(139,30,63,0.08);
+  --soft2: rgba(139,30,63,0.04);
+}
+
+.stApp{
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, sans-serif;
+}
+
+.block-container{
+  max-width: 1200px;
+  padding-top: 2.2rem;
+}
+
+/* Headings */
+h1,h2,h3,h4{
+  color: var(--text) !important;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+p, li, .stMarkdown { color: var(--text) !important; }
+.stCaption, small { color: var(--muted) !important; }
+
+/* Hero */
+.hero{
+  background: linear-gradient(135deg, var(--soft), var(--soft2));
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+}
+.hero-title{
+  font-size: 36px;
+  font-weight: 950;
+  letter-spacing: -0.03em;
+}
+.hero-sub{
+  margin-top: 6px;
+  color: var(--muted) !important;
+  font-weight: 500;
+}
+
+/* Column cards */
+[data-testid="column"] > div{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 18px;
+}
+
+/* Inputs */
+input, textarea, select{
+  background: #ffffff !important;
+  color: var(--text) !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* Radios (BaseWeb) */
+div[data-baseweb="radio"] span{
+  color: var(--text) !important;
+}
+div[data-baseweb="radio"] input:checked + div{
+  border-color: var(--accent) !important;
+}
+div[data-baseweb="radio"] div[role="radio"]{
+  border-color: var(--border) !important;
+}
+
+/* Buttons */
+.stButton > button{
+  background: var(--accent) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-weight: 800 !important;
+  padding: 0.65rem 1rem !important;
+}
+.stButton > button:hover{
+  background: var(--accentHover) !important;
+}
+.stButton > button:focus{
+  box-shadow: 0 0 0 4px rgba(139,30,63,0.20) !important;
+}
+
+/* Make "secondary" (non-primary) buttons subtle */
+.stButton > button[kind="secondary"]{
+  background: #ffffff !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+.stButton > button[kind="secondary"]:hover{
+  background: #f3f4f6 !important;
+}
+
+/* Feature card */
+.feature-card{
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 16px 16px 14px 16px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+}
+.pill{
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--accent);
+  background: rgba(139,30,63,0.10);
+  border: 1px solid rgba(139,30,63,0.18);
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+.muted{ color: var(--muted) !important; font-weight: 500; }
+.dots{ color: rgba(17,24,39,0.35); font-weight: 800; letter-spacing: 2px; }
+
+/* Phone mock */
+.phone{
+  background: linear-gradient(180deg, #ffffff, #fbfbfc);
+  border: 1px solid var(--border);
+  border-radius: 26px;
+  padding: 16px;
+  position: relative;
+}
+.phone-notch{
+  width: 90px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(17,24,39,0.10);
+  margin: 0 auto 12px auto;
+}
+.interrupt{
+  border: 1px solid rgba(139,30,63,0.25);
+  background: rgba(139,30,63,0.08);
+  border-radius: 16px;
+  padding: 12px;
+}
+
+/* Sidebar cleanup */
+section[data-testid="stSidebar"]{
+  background: #ffffff;
+  border-right: 1px solid var(--border);
+  st.sidebar.markdown("## 🏠 GEEGEELease")
+}
+</style>
+""",
+    unsafe_allow_html=True
+)
 
 
 def login_screen():
     st.markdown(
         """
         <div class="hero">
-          <div class="hero-title">🛡️ ScamProof Housing</div>
-          <div class="hero-sub">
+            <div class="hero-title">🏠 GEEGEELease</div>          <div class="hero-sub">
             Verified listings + real-time scam interruption — built for uOttawa students under pressure.
           </div>
         </div>
         """,
         unsafe_allow_html=True
     )
-    st.write("")
 
     left, right = st.columns([1.15, 1])
 
@@ -26,7 +194,6 @@ def login_screen():
         st.markdown("### Create your demo account")
 
         role = st.selectbox("I am a…", ["student", "landlord"], format_func=lambda x: x.title())
-
         username = st.text_input("Username", placeholder="e.g., marie_sindhu")
         email = st.text_input("uOttawa email", placeholder="name@uottawa.ca")
 
@@ -44,6 +211,7 @@ def login_screen():
         st.session_state.setdefault("email_verified", False)
 
         c1, c2 = st.columns([1, 1])
+
         with c1:
             if st.button("Send verification code", use_container_width=True):
                 if not email.lower().endswith("@uottawa.ca"):
@@ -52,7 +220,6 @@ def login_screen():
                     st.session_state.otp_code = str(np.random.randint(100000, 999999))
                     st.session_state.otp_sent = True
                     st.info("Code sent via Outlook (demo). Enter the 6-digit code below.")
-                    # For demo speed you can optionally show it:
                     st.caption(f"(Demo code: {st.session_state.otp_code})")
 
         with c2:
@@ -66,7 +233,7 @@ def login_screen():
                 else:
                     st.error("Incorrect code. Try again.")
 
-        st.markdown("---")
+        st.divider()
         pw = st.text_input("Demo password", type="password", placeholder="demo")
 
         if st.button("Enter ScamProof", type="primary", use_container_width=True):
@@ -94,30 +261,14 @@ def login_screen():
         st.markdown("### MVP carousel")
 
         slides = [
-            {
-                "pill": "Feature 1",
-                "title": "Trust that decays",
-                "desc": "Verified → Stale → Unverified (auto-hidden). No more ‘verified once’ forever.",
-                "art": "🕒"
-            },
-            {
-                "pill": "Feature 2",
-                "title": "Safe Chat Interrupt",
-                "desc": "Detect deposit-before-viewing, urgency, off-platform payment — interrupt in the moment.",
-                "art": "🚨"
-            },
-            {
-                "pill": "Feature 3",
-                "title": "Incident Pack Generator",
-                "desc": "One click generates the scam evidence checklist + ‘pack ready’ screen.",
-                "art": "📦"
-            },
-            {
-                "pill": "Journey",
-                "title": "Guided student flow",
-                "desc": "Onboard → Browse → Chat → Viewing/Lease Safety Check (end-to-end demo).",
-                "art": "🧭"
-            },
+            {"pill": "Feature 1", "title": "Trust that decays",
+             "desc": "Verified → Stale → Unverified (auto-hidden). No more ‘verified once’ forever.", "art": "🕒"},
+            {"pill": "Feature 2", "title": "Safe Chat Interrupt",
+             "desc": "Detect deposit-before-viewing, urgency, off-platform payment — interrupt in the moment.", "art": "🚨"},
+            {"pill": "Feature 3", "title": "Incident Pack Generator",
+             "desc": "One click generates the scam evidence checklist + ‘pack ready’ screen.", "art": "📦"},
+            {"pill": "Journey", "title": "Guided student flow",
+             "desc": "Onboard → Browse → Chat → Viewing/Lease Safety Check (end-to-end demo).", "art": "🧭"},
         ]
 
         idx = st.radio(
@@ -128,6 +279,10 @@ def login_screen():
             horizontal=True
         )
         s = slides[idx]
+
+        # Clean dots (no weird math)
+        dots = "".join(["● " if i == idx else "○ " for i in range(len(slides))]).strip()
+
         st.markdown(
             f"""
             <div class="feature-card">
@@ -136,7 +291,7 @@ def login_screen():
                 {s['art']} {s['title']}
               </div>
               <div class="muted" style="margin-top:.40rem;">{s['desc']}</div>
-              <div class="dots" style="margin-top:.9rem;">{"● " * (idx+1)}{"○ " * (len(slides)-idx-idx-1 if False else (len(slides)-idx-1))}</div>
+              <div class="dots" style="margin-top:.9rem;">{dots}</div>
             </div>
             """,
             unsafe_allow_html=True

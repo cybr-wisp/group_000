@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import re
 from datetime import date, timedelta
-from datetime import datetime as dt
 
 # ---------- CONFIG ----------
 TRUST_STALE_DAYS = 7
@@ -18,7 +17,7 @@ RISK_RULES = [
     },
     {
         "name": "Urgency language",
-        "pattern": r"\b(today\s*only|right\s*now|immediately|asap|many\s+people|lots\s+of\s+interest|someone\s+else|last\s+chance|hold\s*it\s*for\s*you)\b",
+        "pattern": r"\b(today\s*only|right\s*now|immediately|asap|many\s+people|lots\s+of\s+interest|someone\s+else|last\s+chance|hold\s+it\s+for\s+you)\b",
         "score": 25,
         "why": "Artificial urgency pressures students into irreversible mistakes."
     },
@@ -54,141 +53,31 @@ LEASE_FLAG_RULES = [
 ]
 
 # ---------- UI STYLE ----------
-# ---------- UI STYLE ----------
 def inject_css():
+    # NOTE: this expects you already have the plum theme CSS you liked.
+    # Keep this minimal in utils; your Home page is already styling nicely.
     st.markdown(
         """
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-
-        :root{
-          --plum:#4b0f2f;
-          --plum2:#6b143f;
-          --soft:#fff7fb;
-          --card:rgba(255,255,255,.78);
-          --border:rgba(0,0,0,.10);
-          --text:#14121a;
-        }
-
-        html, body, [class*="css"]{
-          font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-          color: var(--text);
-        }
-
-        .block-container { padding-top: 1.2rem; padding-bottom: 2.2rem; max-width: 1180px; }
-        [data-testid="stSidebar"] { padding-top: 1.0rem; }
-
-        /* Background (plum glow) */
-        [data-testid="stAppViewContainer"]{
-          background:
-            radial-gradient(1100px 600px at 15% 8%, rgba(75,15,47,.18), transparent 60%),
-            radial-gradient(900px 520px at 85% 0%, rgba(107,20,63,.12), transparent 55%),
-            linear-gradient(180deg, rgba(255,252,254,1), rgba(250,246,249,1));
-        }
-
-        /* Brand */
-        .brand-title { font-size: 1.55rem; font-weight: 900; letter-spacing: -0.03em; }
-        .brand-sub { opacity: .78; margin-top: .25rem; }
-
-        /* Cards */
-        .card{
-          border: 1px solid var(--border);
-          background: var(--card);
-          border-radius: 20px;
-          padding: 1rem;
-          box-shadow: 0 12px 30px rgba(0,0,0,.06);
-        }
         .muted{opacity:.72;font-size:.92rem;}
-
-        /* Badges */
         .badge{display:inline-block;padding:0.20rem 0.60rem;border-radius:999px;font-size:0.85rem;font-weight:800;border:1px solid rgba(0,0,0,.10);}
         .g{background:rgba(46,204,113,.14);}
         .y{background:rgba(241,196,15,.18);}
         .r{background:rgba(231,76,60,.14);}
-        .p{background:rgba(75,15,47,.12);} /* pending */
-
-        /* Buttons */
-        div.stButton > button{
-          border-radius: 16px !important;
-          font-weight: 800 !important;
-          border: 1px solid rgba(0,0,0,.10) !important;
-        }
-        /* Make primary button plum */
-        div.stButton > button[kind="primary"]{
-          background: linear-gradient(135deg, var(--plum), var(--plum2)) !important;
-          color: white !important;
-          border: none !important;
-        }
-
-        /* Inputs */
-        [data-baseweb="input"] input, [data-baseweb="textarea"] textarea {
-          border-radius: 14px !important;
-        }
-
-        /* Hero */
-        .hero{
-          padding: 1.2rem 1.2rem;
-          border: 1px solid var(--border);
-          border-radius: 22px;
-          background: rgba(255,255,255,.72);
-          backdrop-filter: blur(8px);
-          box-shadow: 0 12px 30px rgba(0,0,0,.06);
-        }
-        .hero-title { font-size: 2.10rem; font-weight: 900; letter-spacing: -0.04em; margin: 0; }
-        .hero-sub { opacity: .78; margin-top: .35rem; font-size: 1.03rem; }
-
-        /* Carousel */
-        .feature-card{
-          border: 1px solid var(--border);
-          border-radius: 20px;
-          padding: 1rem 1rem;
-          background: rgba(255,255,255,.80);
-          box-shadow: 0 12px 30px rgba(0,0,0,.06);
-        }
-        .pill{
-          display:inline-block;
-          padding: .22rem .62rem;
-          border-radius: 999px;
-          font-weight: 900;
-          font-size: .85rem;
-          border: 1px solid rgba(0,0,0,.10);
-          background: rgba(75,15,47,.08);
-        }
-        .dots{opacity:.6; letter-spacing: 2px; text-align:center;}
-
-        /* Scam interrupt */
-        .interrupt{
-          border:1px solid rgba(107,20,63,.35);
-          background:rgba(107,20,63,.09);
-          padding:0.95rem;border-radius:16px;
-        }
-
-        /* Phone frame */
-        .phone{
-          border-radius: 28px;
-          border: 1px solid rgba(0,0,0,.14);
-          background: rgba(255,255,255,.86);
-          padding: .95rem;
-          box-shadow: 0 18px 46px rgba(0,0,0,.10);
-          max-width: 360px;
-          margin-left: auto;
-        }
-        .phone-notch{
-          width: 120px; height: 18px; border-radius: 999px;
-          background: rgba(0,0,0,.08);
-          margin: 0 auto .8rem auto;
-        }
+        .p{background:rgba(155,89,182,.14);} /* pending */
+        .interrupt{border:1px solid rgba(231,76,60,.35);background:rgba(231,76,60,.09);padding:0.95rem;border-radius:16px;}
         </style>
         """,
         unsafe_allow_html=True
     )
+
 # ---------- STATE ----------
 def init_state():
     st.session_state.setdefault("auth", False)
     st.session_state.setdefault("role", "student")  # student | landlord
 
     st.session_state.setdefault("profile", {
-        "budget": 900,
+        "budget": 1200,
         "move_in": date.today() + timedelta(days=30),
         "areas": [],
         "commute_max": 25,
@@ -211,8 +100,6 @@ def init_state():
     st.session_state.setdefault("selected_listing_id", None)
     st.session_state.setdefault("risk_timeline", [])  # list of dicts
     st.session_state.setdefault("chat", [])           # list of dicts
-
-    # One-click incident pack generator (demo)
     st.session_state.setdefault("incident_pack", {
         "ready": False,
         "items": {
@@ -230,7 +117,7 @@ def init_state():
         "Landlord identity confirmed": False,
     })
 
-    # ✅ Landlord profile (demo persistence in session)
+    # Landlord profile (verification funnel)
     st.session_state.setdefault("landlord_profile", {
         "company_name": "",
         "contact_name": "",
@@ -243,29 +130,23 @@ def init_state():
         "created_at": None,
     })
 
-    # ✅ Listings in-session override (so landlord can reconfirm availability)
+    # Listings stored in-session (so landlord can create + verify listings)
     st.session_state.setdefault("listings_override", None)
 
-    # ✅ Funnel metadata for listings (fills "Unknown" + enforces photo-required)
-    st.session_state.setdefault("listing_details", {})
-    st.session_state.setdefault("pending_listing_ids", set())
-
-    # Seed details for your 6 sample listings (only once)
-    if not st.session_state["listing_details"]:
-        st.session_state["listing_details"] = {
-            1: {"address":"Downtown (near uOttawa) • 123 King Edward Ave", "available_date":"2026-03-01", "lease_length":"12 months", "photos_ok": True, "lease_uploaded": False, "status":"Verified"},
-            2: {"address":"Downtown • 250 Laurier Ave E", "available_date":"2026-03-01", "lease_length":"12 months", "photos_ok": True, "lease_uploaded": False, "status":"Verified"},
-            3: {"address":"Sandy Hill • 45 Wilbrod St", "available_date":"2026-03-01", "lease_length":"8 months",  "photos_ok": True, "lease_uploaded": False, "status":"Verified"},
-            4: {"address":"Sandy Hill • 88 Chapel St", "available_date":"2026-03-15", "lease_length":"12 months", "photos_ok": True, "lease_uploaded": False, "status":"Verified"},
-            5: {"address":"Glebe • 12 Bank St", "available_date":"2026-03-01", "lease_length":"12 months", "photos_ok": True, "lease_uploaded": False, "status":"Verified"},
-            6: {"address":"Glebe • 19 Fifth Ave", "available_date":"2026-03-01", "lease_length":"8 months",  "photos_ok": True, "lease_uploaded": False, "status":"Verified"},
-        }
+    # Demo listing metadata stored separately by id (safe for “Unknown” fields)
+    st.session_state.setdefault("listing_meta", {})  # {id: {address, available_date, lease_length, photo_count, ...}}
 
 # ---------- DATA ----------
 @st.cache_data
-def load_listings(csv_path: str):
+def load_listings(csv_path: str) -> pd.DataFrame:
+    """
+    Loads listings.csv but ALSO guarantees required MVP columns exist:
+    id,title,area,price,beds,landlord,verified_at,pending,photo_count
+    """
     df = pd.read_csv(csv_path)
 
+    # normalize columns
+    df.columns = [c.strip() for c in df.columns]
     cols = {c.lower(): c for c in df.columns}
 
     def get_col(*names):
@@ -282,6 +163,7 @@ def load_listings(csv_path: str):
     landlordc = get_col("landlord", "owner", "company")
     verifiedc = get_col("verified_at", "last_verified", "verified")
 
+    # REQUIRED fallbacks
     if idc is None:
         df["id"] = np.arange(1, len(df) + 1)
         idc = "id"
@@ -300,6 +182,8 @@ def load_listings(csv_path: str):
     if landlordc is None:
         df["landlord"] = "Private Landlord"
         landlordc = "landlord"
+
+    # verified_at fallback: seed realistic “Verified 1–16 days ago”
     if verifiedc is None:
         now = pd.Timestamp.now().normalize()
         ages = np.random.choice([1, 2, 5, 8, 12, 16], size=len(df))
@@ -307,7 +191,7 @@ def load_listings(csv_path: str):
         verifiedc = "verified_at"
 
     out = pd.DataFrame({
-        "id": df[idc].astype(int),
+        "id": pd.to_numeric(df[idc], errors="coerce").fillna(0).astype(int),
         "title": df[titlec].astype(str),
         "area": df[areac].astype(str),
         "price": pd.to_numeric(df[pricec], errors="coerce").fillna(999).astype(int),
@@ -317,74 +201,80 @@ def load_listings(csv_path: str):
     })
 
     out["verified_at"] = out["verified_at"].fillna(pd.Timestamp.now().normalize() - pd.Timedelta(days=2))
+
+    # ✅ Funnel columns (guaranteed)
+    if "pending" not in out.columns:
+        out["pending"] = False
+    if "photo_count" not in out.columns:
+        out["photo_count"] = 3  # seeded sample listings are “complete”
+    if "lease_draft_uploaded" not in out.columns:
+        out["lease_draft_uploaded"] = False
+
+    # ensure types
+    out["pending"] = out["pending"].astype(bool)
+    out["photo_count"] = pd.to_numeric(out["photo_count"], errors="coerce").fillna(0).astype(int)
+    out["lease_draft_uploaded"] = out["lease_draft_uploaded"].astype(bool)
+
     return out
 
-@st.cache_data
-def load_roommates(csv_path: str):
-    df = pd.read_csv(csv_path)
-    df.columns = [c.strip().lower() for c in df.columns]
 
-    if "id" in df.columns:
-        df["id"] = pd.to_numeric(df["id"], errors="coerce").fillna(0).astype(int)
-    if "cleanliness" in df.columns:
-        df["cleanliness"] = pd.to_numeric(df["cleanliness"], errors="coerce").fillna(5).astype(int)
-    if "noise" in df.columns:
-        df["noise"] = pd.to_numeric(df["noise"], errors="coerce").fillna(5).astype(int)
-    if "budget" in df.columns:
-        df["budget"] = pd.to_numeric(df["budget"], errors="coerce").fillna(900).astype(int)
-
-    for col in ["name","sleep_schedule","smoking","pets","notes"]:
-        if col not in df.columns:
-            df[col] = ""
-
-    return df
-
-def get_listings():
+def get_listings() -> pd.DataFrame:
+    """Return listings dataframe, using in-session override if present."""
     if st.session_state.get("listings_override") is not None:
         return st.session_state["listings_override"].copy()
     return load_listings("data/listings.csv")
 
+
 def set_listings(df: pd.DataFrame):
+    """Persist listings changes for this demo session."""
     st.session_state["listings_override"] = df.copy()
 
-def ensure_selected_listing(df):
+
+def ensure_selected_listing(df: pd.DataFrame):
     if st.session_state.selected_listing_id is None and not df.empty:
         st.session_state.selected_listing_id = int(df.iloc[0]["id"])
 
-# ---------- LISTING FUNNEL META ----------
+
+# ---------- LISTING META (fills “Unknown” fields) ----------
 def listing_meta(listing_id: int) -> dict:
-    return st.session_state.get("listing_details", {}).get(int(listing_id), {
-        "address": "—",
-        "available_date": "—",
-        "lease_length": "—",
-        "photos_ok": False,
-        "lease_uploaded": False,
-        "status": "Pending",
-    })
+    """
+    Returns rich metadata for the listing card.
+    This is where we fill the “Unknown” fields without needing your CSV to change.
+    """
+    store = st.session_state.get("listing_meta", {})
+    if listing_id in store:
+        return store[listing_id]
 
-def set_listing_meta(listing_id: int, updates: dict):
-    st.session_state.setdefault("listing_details", {})
-    base = st.session_state["listing_details"].get(int(listing_id), {})
-    base.update(updates)
-    st.session_state["listing_details"][int(listing_id)] = base
+    # seeded defaults (nice pitch-ready)
+    areas = ["Downtown", "Sandy Hill", "ByWard Market", "Glebe", "Vanier"]
+    streets = ["Laurier Ave E", "Wilbrod St", "King Edward Ave", "Elgin St", "Rideau St"]
+    rng = np.random.RandomState(listing_id * 17)
 
-def mark_pending(listing_id: int):
-    st.session_state.setdefault("pending_listing_ids", set())
-    st.session_state["pending_listing_ids"].add(int(listing_id))
-    set_listing_meta(int(listing_id), {"status": "Pending"})
+    meta = {
+        "address": f"{rng.randint(40, 420)} {rng.choice(streets)}",
+        "available_date": str((date.today() + timedelta(days=21)).isoformat()),
+        "lease_length": f"{rng.choice([8, 12])} months",
+        "photo_count": int(rng.choice([1, 2, 3])),
+        "area_detail": rng.choice(areas),
+    }
 
-def mark_verified(listing_id: int):
-    st.session_state.setdefault("pending_listing_ids", set())
-    if int(listing_id) in st.session_state["pending_listing_ids"]:
-        st.session_state["pending_listing_ids"].remove(int(listing_id))
-    set_listing_meta(int(listing_id), {"status": "Verified"})
+    store[listing_id] = meta
+    st.session_state["listing_meta"] = store
+    return meta
 
-def pending_badge():
-    return '<span class="badge p">Pending verification</span>'
+
+def set_listing_meta(listing_id: int, meta_updates: dict):
+    store = st.session_state.get("listing_meta", {})
+    base = store.get(listing_id, listing_meta(listing_id))
+    base.update(meta_updates or {})
+    store[listing_id] = base
+    st.session_state["listing_meta"] = store
+
 
 # ---------- TRUST / BADGES ----------
 def days_since(ts: pd.Timestamp) -> int:
     return int((pd.Timestamp.now().normalize() - ts.normalize()).days)
+
 
 def trust_status(ts: pd.Timestamp):
     d = days_since(ts)
@@ -394,11 +284,17 @@ def trust_status(ts: pd.Timestamp):
         return "Stale", "y"
     return "Unverified", "r"
 
+
 def trust_badge(ts: pd.Timestamp):
     status, cls = trust_status(ts)
     d = days_since(ts)
     when = "today" if d <= 0 else f"{d}d ago"
     return f'<span class="badge {cls}">{status} • {when}</span>'
+
+
+def pending_badge():
+    return '<span class="badge p">Pending verification</span>'
+
 
 def compute_price_band(df: pd.DataFrame, area: str):
     area_df = df[df["area"] == area]
@@ -408,28 +304,113 @@ def compute_price_band(df: pd.DataFrame, area: str):
     hi = int(np.percentile(area_df["price"], 75))
     return lo, hi
 
-def is_visible_to_students(row) -> bool:
-    """
-    Visibility:
-    - Trust is Verified or Stale
-    - Not Pending
-    - Photos mandatory (photos_ok True)
-    - Auto-hide if Unverified (15+ days)
-    """
-    lid = int(row["id"])
-    meta = listing_meta(lid)
 
-    if meta.get("status") == "Pending":
-        return False
-    if not meta.get("photos_ok", False):
+# ---------- FUNNEL VISIBILITY ----------
+def is_visible_to_students(row: pd.Series) -> bool:
+    """
+    This is the core of your “verification funnel”.
+    Students ONLY see:
+      - not pending
+      - trust status in Verified/Stale
+      - photo_count >= 1
+    Unverified OR Pending are auto-hidden.
+    """
+    try:
+        if bool(row.get("pending", False)):
+            return False
+
+        ts = row.get("verified_at", None)
+        if ts is None or pd.isna(ts):
+            return False
+
+        status, _ = trust_status(ts)
+        if status not in ["Verified", "Stale"]:
+            return False
+
+        if int(row.get("photo_count", 0)) < 1:
+            return False
+
+        return True
+    except Exception:
         return False
 
-    status, _ = trust_status(row["verified_at"])
-    return status in ("Verified", "Stale")
+
+def can_landlord_make_visible() -> bool:
+    """
+    Landlord must:
+    verify email + phone
+    add card on file
+    then confirm availability
+    """
+    p = st.session_state.get("landlord_profile", {})
+    return bool(p.get("email_verified")) and bool(p.get("phone_verified")) and bool(p.get("card_on_file"))
+
+
+def mark_verified(listing_id: int):
+    """
+    Call this after landlord confirms availability.
+    Sets: pending=False, verified_at=now
+    """
+    df = get_listings()
+    if df.empty:
+        return
+    df.loc[df["id"] == int(listing_id), "pending"] = False
+    df.loc[df["id"] == int(listing_id), "verified_at"] = pd.Timestamp.now().normalize()
+    set_listings(df)
+
+
+# ---------- CREATE LISTING (Request to List form) ----------
+def create_pending_listing(
+    landlord_name: str,
+    title: str,
+    area: str,
+    price: int,
+    beds: int,
+    address: str,
+    available_date: str,
+    lease_length: str,
+    photo_count: int,
+    lease_draft_uploaded: bool
+) -> int:
+    """
+    Creates a listing in 🟡 Pending verification state.
+    It will NOT appear to students until mark_verified() is called.
+    """
+    df = get_listings()
+
+    new_id = int(df["id"].max() + 1) if not df.empty else 1
+
+    row = {
+        "id": new_id,
+        "title": title or f"Unit {new_id}",
+        "area": area or "Unknown",
+        "price": int(price) if price is not None else 999,
+        "beds": int(beds) if beds is not None else 1,
+        "landlord": landlord_name or "Private Landlord",
+        "verified_at": pd.NaT,          # not verified yet
+        "pending": True,               # ✅ funnel flag
+        "photo_count": int(photo_count),
+        "lease_draft_uploaded": bool(lease_draft_uploaded),
+    }
+
+    df2 = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
+    set_listings(df2)
+
+    # store nice metadata for cards
+    set_listing_meta(new_id, {
+        "address": address or "Unknown",
+        "available_date": available_date or str((date.today() + timedelta(days=30)).isoformat()),
+        "lease_length": lease_length or "12 months",
+        "photo_count": int(photo_count),
+        "area_detail": area or "Unknown",
+    })
+
+    return new_id
+
 
 # ---------- RISK / LEASE SCAN ----------
 def risk_detect(message: str):
-    txt = message.lower()
+    txt = (message or "").lower()
     hits = []
     total = 0
     for rule in RISK_RULES:
@@ -438,32 +419,20 @@ def risk_detect(message: str):
             total += rule["score"]
     return min(total, 100), hits
 
+
 def lease_scan(text: str):
-    t = text.lower()
+    t = (text or "").lower()
     flags = []
     for rule in LEASE_FLAG_RULES:
         if re.search(rule["pattern"], t):
             flags.append(rule)
     return flags
 
-def add_risk_event(event_name: str, score: int, excerpt: str):
-    st.session_state.setdefault("risk_timeline", [])
-    st.session_state["risk_timeline"].append({
-        "event": event_name,
-        "score": int(score),
-        "excerpt": excerpt[:80],
-        "time": dt.now().strftime("%H:%M"),
-    })
-
-# ---------- INCIDENT PACK ----------
-def generate_incident_pack():
-    st.session_state["incident_pack"]["ready"] = True
-    for k in st.session_state["incident_pack"]["items"].keys():
-        st.session_state["incident_pack"]["items"][k] = True
 
 # ---------- SIDEBAR TIMELINE ----------
-def render_risk_timeline_sidebar(df):
+def render_risk_timeline_sidebar(df: pd.DataFrame):
     st.sidebar.markdown("### 🧾 Risk Timeline")
+    st.sidebar.caption("Explainable events judges can see.")
     if not st.session_state.risk_timeline:
         st.sidebar.caption("No risk events yet.")
         return
