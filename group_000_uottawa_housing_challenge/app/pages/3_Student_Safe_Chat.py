@@ -1,9 +1,9 @@
 import streamlit as st
 from datetime import datetime
-from utils import init_state, load_listings, risk_detect
+from app.utils import init_state, load_listings, risk_detect
 
 init_state()
-from utils import get_listings
+from app.utils import get_listings
 df = get_listings()
 
 st.markdown("## 3) Safe Messaging (Scam Interrupt)")

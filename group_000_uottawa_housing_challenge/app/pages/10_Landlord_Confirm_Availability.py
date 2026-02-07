@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from utils import init_state, load_listings
+from app.utils import init_state, load_listings
 
 init_state()
 df = load_listings("data/listings.csv")

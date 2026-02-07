@@ -1,21 +1,39 @@
 import streamlit as st
-from utils import init_state, load_listings, ensure_selected_listing, compute_price_band, trust_badge, trust_status
+from app.utils import (
+    inject_css, init_state, get_listings, ensure_selected_listing,
+    compute_price_band, trust_badge, trust_status,
+    listing_meta, is_visible_to_students
+)
 
+inject_css()
 init_state()
-from utils import get_listings
 df = get_listings()
 
-st.markdown("## 2) Verified Listings Browse")
+st.markdown(
+    """
+    <div class="hero">
+      <div class="hero-title">2) Verified Listings Browse</div>
+      <div class="hero-sub">
+        Only listings that pass the verification funnel stay visible. Trust decays automatically.
+      </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+st.write("")
 
 if st.session_state.role != "student":
     st.info("Switch to Student role from Home (log out and log in as Student).")
     st.stop()
 
-# Trust decay: only show Verified + Stale in browse
-df["trust"] = df["verified_at"].apply(lambda x: trust_status(x)[0])
-visible = df[df["trust"].isin(["Verified", "Stale"])].copy()
+# Funnel visibility
+visible = df[df.apply(is_visible_to_students, axis=1)].copy()
+if visible.empty:
+    st.warning("No visible listings yet. (Landlord listings must be Verified/Stale + have photos.)")
+    st.stop()
 
-c1, c2, c3 = st.columns(3)
+# Filters (clean + minimal)
+c1, c2, c3 = st.columns([1, 1, 1])
 with c1:
     max_price = st.slider("Max price", 500, 2500, int(st.session_state.profile["budget"]), 25)
 with c2:
@@ -35,7 +53,7 @@ if beds != "Any":
         f = f[f["beds"] == int(beds)]
 
 if f.empty:
-    st.warning("No verified/stale listings match. Try changing filters.")
+    st.warning("No visible listings match. Try changing filters.")
     st.stop()
 
 ensure_selected_listing(f)
@@ -47,10 +65,19 @@ with left:
     for _, row in f.sort_values("price").iterrows():
         band_lo, band_hi = compute_price_band(df, row["area"])
         selected = int(row["id"]) == int(st.session_state.selected_listing_id)
+        meta = listing_meta(int(row["id"]))
 
         with st.container(border=True):
             st.markdown(f"**{row['title']}**")
-            st.markdown(f"<span class='muted'>{row['area']} • {row['beds']} bed • {row['landlord']}</span>", unsafe_allow_html=True)
+            st.markdown(
+                f"<span class='muted'>{row['area']} • {row['beds']} bed • {row['landlord']}</span>",
+                unsafe_allow_html=True
+            )
+
+            st.caption(f"📍 {row['area']} • {meta['address']}")
+            st.caption(f"📅 Available: {meta['available_date']} • Lease: {meta['lease_length']}")
+            st.caption(f"🖼️ Photos on file: {meta['photo_count']}")
+
             st.markdown(f"### ${int(row['price'])}/mo")
             st.markdown(trust_badge(row["verified_at"]), unsafe_allow_html=True)
             st.caption(f"Typical for {row['area']}: ${band_lo}–${band_hi}")
@@ -63,14 +90,31 @@ with left:
 with right:
     st.markdown("### Selected listing")
     sel = df[df["id"] == int(st.session_state.selected_listing_id)].iloc[0]
+    meta = listing_meta(int(sel["id"]))
     band_lo, band_hi = compute_price_band(df, sel["area"])
+    status, _ = trust_status(sel["verified_at"])
 
     with st.container(border=True):
         st.markdown(f"**{sel['title']}**")
-        st.markdown(f"<span class='muted'>{sel['area']} • {sel['beds']} bed • {sel['landlord']}</span>", unsafe_allow_html=True)
+        st.markdown(
+            f"<span class='muted'>{sel['area']} • {sel['beds']} bed • {sel['landlord']}</span>",
+            unsafe_allow_html=True
+        )
+
+        st.caption(f"📍 {sel['area']} • {meta['address']}")
+        st.caption(f"📅 Available: {meta['available_date']} • Lease: {meta['lease_length']}")
+        st.caption(f"🖼️ Photos on file: {meta['photo_count']}")
+
         st.markdown(f"### ${int(sel['price'])}/mo")
+
         st.markdown("**Proof-of-Availability**")
         st.markdown(trust_badge(sel["verified_at"]), unsafe_allow_html=True)
+
         st.markdown("**Price sanity band**")
         st.write(f"Typical: **${band_lo}–${band_hi}**")
-        st.info("Next: go to **Student Safe Chat** to contact landlord in-platform.")
+
+        st.markdown("**Why this is visible**")
+        st.write(f"- Status: **{status}** (decays over time)")
+        st.write("- Passed funnel: photos uploaded + not pending")
+
+        st.info("Next: go to **Student Safe Chat** to contact landlord in-platform and trigger the scam interrupt.")

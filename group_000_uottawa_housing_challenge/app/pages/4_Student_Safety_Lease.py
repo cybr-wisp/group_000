@@ -1,5 +1,5 @@
 import streamlit as st
-from utils import init_state, load_listings, lease_scan
+from app.utils import init_state, load_listings, lease_scan
 
 init_state()
 df = load_listings("data/listings.csv")
