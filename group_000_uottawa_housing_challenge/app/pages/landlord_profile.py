@@ -48,7 +48,7 @@ else:
         meta = listing_meta(int(row["id"]))
 
         with st.container(border=True):
-            st.markdown(f"**{row['title']}** — {row['area']} — **${int(row['price'])}/mo**")
+            st.markdown(f"**{row['title']}** — {row['area']} — **\\${int(row['price'])}/mo**")
             st.markdown(trust_badge(row["verified_at"]), unsafe_allow_html=True)
             st.caption(f"📍 {meta.get('address','—')} • 📅 {meta.get('available_date','—')} • Lease: {meta.get('lease_length','—')}")
             st.caption("📷 Photos: " + ("✅ Uploaded" if meta.get("photos_ok") else "❌ Missing (required)"))

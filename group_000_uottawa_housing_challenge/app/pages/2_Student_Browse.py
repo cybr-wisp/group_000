@@ -76,9 +76,9 @@ with left:
             st.caption(f"📅 Available: {meta['available_date']} • Lease: {meta['lease_length']}")
             st.caption(f"🖼️ Photos on file: {meta['photo_count']}")
 
-            st.markdown(f"### ${int(row['price'])}/mo")
+            st.markdown(f"### \\${int(row['price'])}/mo")
             st.markdown(trust_badge(row["verified_at"]), unsafe_allow_html=True)
-            st.caption(f"Typical for {row['area']}: ${band_lo}–${band_hi}")
+            st.caption(f"Typical for {row['area']}: \\${band_lo}–\\${band_hi}")
 
             if st.button("Select", key=f"sel_{row['id']}", type="primary" if selected else "secondary"):
                 st.session_state.selected_listing_id = int(row["id"])
@@ -103,13 +103,13 @@ with right:
         st.caption(f"📅 Available: {meta['available_date']} • Lease: {meta['lease_length']}")
         st.caption(f"🖼️ Photos on file: {meta['photo_count']}")
 
-        st.markdown(f"### ${int(sel['price'])}/mo")
+        st.markdown(f"### \\${int(sel['price'])}/mo")
 
         st.markdown("**Proof-of-Availability**")
         st.markdown(trust_badge(sel["verified_at"]), unsafe_allow_html=True)
 
         st.markdown("**Price sanity band**")
-        st.write(f"Typical: **${band_lo}–${band_hi}**")
+        st.write(f"Typical: **\\${band_lo}–\\${band_hi}**")
 
         st.markdown("**Why this is visible**")
         st.write(f"- Status: **{status}** (decays over time)")

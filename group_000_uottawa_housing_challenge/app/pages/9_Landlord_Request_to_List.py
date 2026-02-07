@@ -39,7 +39,7 @@ if owned.empty:
 else:
     for _, row in owned.sort_values("id").iterrows():
         with st.container(border=True):
-            st.markdown(f"**{row['title']}** — {row['area']} — **${int(row['price'])}/mo**")
+            st.markdown(f"**{row['title']}** — {row['area']} — **\\${int(row['price'])}/mo**")
             st.markdown(trust_badge(row["verified_at"]), unsafe_allow_html=True)
 
             c1, c2 = st.columns([1, 1])
